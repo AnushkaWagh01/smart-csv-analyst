@@ -8,6 +8,7 @@ import HistoryPanel from '@/components/analyst/HistoryPanel';
 import DataInput from '@/components/analyst/DataInput';
 import LoadingScreen from '@/components/analyst/LoadingScreen';
 import ResultsView from '@/components/analyst/ResultsView';
+import Footer from '@/components/analyst/Footer';
 
 type Screen = 'input' | 'loading' | 'results';
 
@@ -33,18 +34,14 @@ const Index = () => {
 
   const handleAnalyze = useCallback(async () => {
     if (!csvMeta) return;
-    console.log('[Analyze] Starting analysis...', { provider, groqKey: groqApiKey.length, geminiKey: geminiApiKey.length });
     setError('');
     setScreen('loading');
     try {
       const prompt = buildPrompt(question, csvMeta);
-      console.log('[Analyze] Prompt built, calling AI...');
       const { text, provider: usedProvider } = await callAI(prompt, groqApiKey, geminiApiKey, provider, fallback);
-      console.log('[Analyze] AI responded via', usedProvider);
       const parsed = parseAIResponse(text);
-      console.log('[Analyze] Parsed result:', Object.keys(parsed));
       setResult(parsed);
-      setResultMeta(`${fileName} · ${csvMeta.rowCount} rows · via ${usedProvider === 'groq' ? 'Groq Llama 3' : 'Gemini 2.0'}`);
+      setResultMeta(`${fileName} · ${csvMeta.rowCount.toLocaleString()} rows · via ${usedProvider === 'groq' ? 'Groq Llama 3' : 'Gemini 2.0'}`);
       addToHistory({
         question, score: csvMeta.qualityScore, provider: usedProvider,
         fileName, date: new Date().toLocaleDateString(), result: parsed,
@@ -96,7 +93,7 @@ const Index = () => {
   };
 
   return (
-    <div className="max-w-[940px] mx-auto px-6 pb-24 relative z-[1]">
+    <div className="max-w-[960px] mx-auto px-4 md:px-6 pb-8 relative z-[1]">
       <Header />
       <ApiConfig
         groqApiKey={groqApiKey} setGroqApiKey={setGroqApiKey}
@@ -107,7 +104,9 @@ const Index = () => {
       <HistoryPanel history={history} isOpen={historyOpen} onToggle={() => setHistoryOpen(!historyOpen)} onLoad={handleLoadHistory} onDelete={handleDeleteHistory} onClear={handleClearHistory} />
 
       {error && (
-        <div className="bg-red-dim border border-red/25 rounded-sm px-4 py-3 text-red text-[13px] mb-4">⚠ {error}</div>
+        <div className="glass-card border-destructive/30 bg-destructive/5 px-5 py-3.5 text-destructive text-sm mb-5 animate-slide-up">
+          ⚠ {error}
+        </div>
       )}
 
       {screen === 'input' && (
@@ -119,6 +118,8 @@ const Index = () => {
       {screen === 'results' && result && csvMeta && (
         <ResultsView result={result} meta={csvMeta} resultMeta={resultMeta} onReset={handleReset} onFollowup={handleFollowup} />
       )}
+
+      <Footer />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Key, ChevronDown, ChevronUp, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Key, ChevronDown, ChevronUp, ToggleLeft, ToggleRight, Shield } from 'lucide-react';
 import { Provider } from '@/lib/analyst-types';
 
 interface Props {
@@ -11,48 +11,53 @@ interface Props {
 
 const ApiConfig = ({ groqApiKey, setGroqApiKey, geminiApiKey, setGeminiApiKey, provider, setProvider, fallback, setFallback }: Props) => {
   const [open, setOpen] = useState(false);
+  const configured = groqApiKey || geminiApiKey;
 
   return (
-    <div className="glass-card mb-4 overflow-hidden">
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors">
-        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+    <div className="glass-card mb-5 overflow-hidden">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-muted/20 transition-colors">
+        <div className="flex items-center gap-2.5 text-sm font-semibold text-foreground">
           <Key className="w-4 h-4 text-primary" />
           API Configuration
-          {(groqApiKey || geminiApiKey) && <span className="text-xs text-success bg-success/10 px-2 py-0.5 rounded-full">configured</span>}
+          {configured && <span className="badge-pill bg-success/10 text-success">configured</span>}
         </div>
         {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
       </button>
 
       {open && (
-        <div className="px-4 pb-4 space-y-3 animate-slide-up">
+        <div className="px-5 pb-5 space-y-4 animate-slide-up">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <Shield className="w-3 h-3" />
+            Keys are stored locally in your browser only — never sent to our servers.
+          </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Groq API Key</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Groq API Key</label>
             <input
               type="password"
               value={groqApiKey}
               onChange={e => setGroqApiKey(e.target.value)}
               placeholder="gsk_..."
-              className="w-full bg-muted border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="input-field"
             />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Gemini API Key</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Gemini API Key</label>
             <input
               type="password"
               value={geminiApiKey}
               onChange={e => setGeminiApiKey(e.target.value)}
               placeholder="AIza..."
-              className="w-full bg-muted border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="input-field"
             />
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex gap-1">
+            <div className="flex gap-1 p-1 bg-muted/40 rounded-xl">
               {(['groq', 'gemini'] as Provider[]).map(p => (
                 <button
                   key={p}
                   onClick={() => setProvider(p)}
-                  className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
-                    provider === p ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'
+                  className={`px-4 py-2 text-xs rounded-lg font-semibold transition-all ${
+                    provider === p ? 'btn-primary shadow-md' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {p === 'groq' ? 'Groq' : 'Gemini'}
@@ -60,8 +65,8 @@ const ApiConfig = ({ groqApiKey, setGroqApiKey, geminiApiKey, setGeminiApiKey, p
               ))}
             </div>
             <button onClick={() => setFallback(!fallback)} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              {fallback ? <ToggleRight className="w-4 h-4 text-primary" /> : <ToggleLeft className="w-4 h-4" />}
-              Fallback
+              {fallback ? <ToggleRight className="w-5 h-5 text-primary" /> : <ToggleLeft className="w-5 h-5" />}
+              <span className="font-medium">Auto-fallback</span>
             </button>
           </div>
         </div>
