@@ -93,34 +93,39 @@ const Index = () => {
   };
 
   return (
-    <div className="max-w-[960px] mx-auto px-4 md:px-6 pb-8 relative z-[1]">
-      <Header />
-      <ApiConfig
-        groqApiKey={groqApiKey} setGroqApiKey={setGroqApiKey}
-        geminiApiKey={geminiApiKey} setGeminiApiKey={setGeminiApiKey}
-        provider={provider} setProvider={setProvider}
-        fallback={fallback} setFallback={setFallback}
-      />
-      <HistoryPanel history={history} isOpen={historyOpen} onToggle={() => setHistoryOpen(!historyOpen)} onLoad={handleLoadHistory} onDelete={handleDeleteHistory} onClear={handleClearHistory} />
+    <>
+      {/* Ambient background */}
+      <div className="app-bg" />
 
-      {error && (
-        <div className="glass-card border-destructive/30 bg-destructive/5 px-5 py-3.5 text-destructive text-sm mb-5 animate-slide-up">
-          ⚠ {error}
-        </div>
-      )}
+      <div className="relative z-[1] max-w-[960px] mx-auto px-4 md:px-6 pb-8">
+        <Header />
+        <ApiConfig
+          groqApiKey={groqApiKey} setGroqApiKey={setGroqApiKey}
+          geminiApiKey={geminiApiKey} setGeminiApiKey={setGeminiApiKey}
+          provider={provider} setProvider={setProvider}
+          fallback={fallback} setFallback={setFallback}
+        />
+        <HistoryPanel history={history} isOpen={historyOpen} onToggle={() => setHistoryOpen(!historyOpen)} onLoad={handleLoadHistory} onDelete={handleDeleteHistory} onClear={handleClearHistory} />
 
-      {screen === 'input' && (
-        <DataInput csvMeta={csvMeta} setCsvData={setCsvData} setCsvMeta={setCsvMeta} question={question} setQuestion={setQuestion} fileName={fileName} setFileName={setFileName} onAnalyze={handleAnalyze} canAnalyze={canAnalyze} />
-      )}
+        {error && (
+          <div className="glass-card border-destructive/30 bg-destructive/5 px-6 py-4 text-destructive text-sm mb-6 animate-slide-up font-medium">
+            ⚠ {error}
+          </div>
+        )}
 
-      {screen === 'loading' && <LoadingScreen provider={provider} />}
+        {screen === 'input' && (
+          <DataInput csvMeta={csvMeta} setCsvData={setCsvData} setCsvMeta={setCsvMeta} question={question} setQuestion={setQuestion} fileName={fileName} setFileName={setFileName} onAnalyze={handleAnalyze} canAnalyze={canAnalyze} />
+        )}
 
-      {screen === 'results' && result && csvMeta && (
-        <ResultsView result={result} meta={csvMeta} resultMeta={resultMeta} onReset={handleReset} onFollowup={handleFollowup} />
-      )}
+        {screen === 'loading' && <LoadingScreen provider={provider} />}
 
-      <Footer />
-    </div>
+        {screen === 'results' && result && csvMeta && (
+          <ResultsView result={result} meta={csvMeta} resultMeta={resultMeta} onReset={handleReset} onFollowup={handleFollowup} />
+        )}
+
+        <Footer />
+      </div>
+    </>
   );
 };
 
